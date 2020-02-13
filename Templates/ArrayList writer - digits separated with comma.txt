@@ -1,0 +1,33 @@
+package com.company;
+
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        //Separator is mutable
+        List<Integer> nums = Arrays.stream(scanner.nextLine()
+                .split(", "))
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+
+        printer(nums);
+    }
+
+    private static void printer(List<Integer> nums) {
+        for (int i = 0; i < nums.size(); i++) {
+            if (i == nums.size() - 1) {
+                System.out.println(nums.get(i));
+            } else {
+                System.out.print(nums.get(i) + ", ");
+            }
+        }
+    }
+}
