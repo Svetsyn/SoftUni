@@ -1,0 +1,73 @@
+package com.company;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        List<Integer> males = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(e -> e > 0).filter(e -> e % 25 != 0).collect(Collectors.toList());
+        List<Integer> females = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(e -> e > 0).filter(e -> e % 25 != 0).collect(Collectors.toList());
+
+        int matches = 0;
+//For correction: should to add methods and check for mistakes
+        while (males.size() > 0 || females.size() > 0) {
+            for (int f = 0; f < females.size(); f++) {
+                for (int m = males.size() - 1; m >= 0; m--) {
+                    if (females.get(f) == males.get(m)) {
+                        females.remove(females.get(f));
+                        males.remove(males.get(m));
+                        matches++;
+                        f--;
+                        m++;
+                        break;
+                    } else {
+                        females.remove(females.get(f));
+                        males.set(m, males.get(m) - 2);
+                        for (Integer mm : males) {
+                            if (mm <= 0) {
+                                males.remove(mm);
+                                break;
+                            }
+                        }
+                        f--;
+                        m++;
+                        break;
+                    }
+                }
+            }
+            break;
+        }
+        System.out.println("Matches: " + matches);
+        System.out.print("Males left: ");
+        if (males.size() != 0) {
+            for (int i = 0; i < males.size(); i++) {
+                if (i == males.size() - 1) {
+                    System.out.println(males.get(i));
+                } else {
+                    System.out.print(males.get(i) + ", ");
+                }
+            }
+        } else {
+            System.out.println("none");
+        }
+        System.out.print("Females left: ");
+        if (females.size() != 0) {
+            for (int i = 0; i < females.size(); i++) {
+                if (i == females.size() - 1) {
+                    System.out.println(females.get(i));
+                } else {
+                    System.out.print(females.get(i) + ", ");
+                }
+            }
+        } else {
+            System.out.println("none");
+        }
+    }
+}
