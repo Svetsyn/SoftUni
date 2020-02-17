@@ -1,0 +1,144 @@
+package com.company;
+
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        List<Integer> materials = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(n -> n != 0).collect(Collectors.toList());
+        List<Integer> magicLevel = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(n -> n != 0).collect(Collectors.toList());
+        Map<String, Integer> presentBox = new TreeMap<>();
+
+        int calculation = 0;
+        int addMaterials = 0;
+        String present = "";
+        if (materials.size() > 0 && magicLevel.size() > 0) {
+            for (int i = materials.size() - 1; i >= 0; i--) {
+                for (int k = 0; k < magicLevel.size(); k++) {
+                    calculation = materials.get(i) * magicLevel.get(k);
+                    if (calculation >= 0) {
+                        if (calculation == 150) {
+                            present = "Doll";
+                            if (!presentBox.containsKey(present)) {
+                                presentBox.put(present, 1);
+                            } else {
+                                presentBox.put(present, presentBox.get(present) + 1);
+                            }
+                            materials.remove(materials.size() - 1);
+                            magicLevel.remove(magicLevel.get(k));
+                            i = materials.size();
+                            k = 0;
+                            calculation = 0;
+                            break;
+                        } else if (calculation == 250) {
+                            present = "Wooden train";
+                            if (!presentBox.containsKey(present)) {
+                                presentBox.put(present, 1);
+                            } else {
+                                presentBox.put(present, presentBox.get(present) + 1);
+                            }
+                            materials.remove(materials.size() - 1);
+                            magicLevel.remove(magicLevel.get(k));
+                            i = materials.size();
+                            k = 0;
+                            calculation = 0;
+                            break;
+                        } else if (calculation == 300) {
+                            present = "Teddy bear";
+                            if (!presentBox.containsKey(present)) {
+                                presentBox.put(present, 1);
+                            } else {
+                                presentBox.put(present, presentBox.get(present) + 1);
+                            }
+                            materials.remove(materials.size() - 1);
+                            magicLevel.remove(magicLevel.get(k));
+                            i = materials.size();
+                            k = 0;
+                            calculation = 0;
+                            break;
+                        } else if (calculation == 400) {
+                            present = "Bicycle";
+                            if (!presentBox.containsKey(present)) {
+                                presentBox.put(present, 1);
+                            } else {
+                                presentBox.put(present, presentBox.get(present) + 1);
+                            }
+                            materials.remove(materials.size() - 1);
+                            magicLevel.remove(magicLevel.get(k));
+                            i = materials.size();
+                            k = 0;
+                            calculation = 0;
+                            break;
+                        } else {
+                            magicLevel.remove(magicLevel.get(k));
+                            materials.set(i, materials.get(i) + 15);
+                            i = materials.size();
+                            k = 0;
+                            calculation = 0;
+                            break;
+                        }
+                    } else if (calculation < 0) {
+                        addMaterials = materials.get(i) + magicLevel.get(k);
+                        materials.remove(materials.size() - 1);
+                        magicLevel.remove(magicLevel.get(k));
+                        if (addMaterials != 0) {
+                            materials.add(addMaterials);
+                        }
+                        i = materials.size();
+                        k = 0;
+                        calculation = 0;
+                        addMaterials = 0;
+                        break;
+                    }
+                }
+            }
+        }
+
+        boolean checkForPairs = isValid(presentBox);
+
+        if (!materials.isEmpty()) {
+            System.out.print("Materials left: ");
+            for (int i = materials.size() - 1; i >= 0; i--) {
+                if (i == 0) {
+                    System.out.println(materials.get(i));
+                } else {
+                    System.out.print(materials.get(i) + ", ");
+                }
+            }
+        }
+        if (!magicLevel.isEmpty()) {
+            System.out.print("Magic left: ");
+            for (int i = magicLevel.size() - 1; i >= 0; i--) {
+                if (i == 0) {
+                    System.out.println(magicLevel.get(i));
+                } else {
+                    System.out.print(magicLevel.get(i) + ", ");
+                }
+            }
+        }
+        for (Map.Entry<String, Integer> entry : presentBox.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    private static boolean isValid(Map<String, Integer> presentBox) {
+        boolean checkForPairs = false;
+        if (presentBox.containsKey("Doll") && presentBox.containsKey("Wooden train")) {
+            checkForPairs = true;
+        }
+        if (presentBox.containsKey("Bicycle") && presentBox.containsKey("Teddy bear")) {
+            checkForPairs = true;
+        }
+
+        if (checkForPairs == true) {
+            System.out.println("The presents are crafted! Merry Christmas!");
+        } else {
+            System.out.println("No presents this Christmas!");
+        }
+        return checkForPairs;
+    }
+}
