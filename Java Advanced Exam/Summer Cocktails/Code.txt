@@ -1,0 +1,105 @@
+package com.company;
+
+import java.util.*;
+import java.util.spi.AbstractResourceBundleProvider;
+import java.util.stream.Collectors;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        List<Integer> ingredients = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt)
+                .collect(Collectors.toList());
+
+        List<Integer> freshnessLevel = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt)
+                .collect(Collectors.toList());
+        Map<String, Integer> cocktails = new TreeMap<>();
+
+        double totalFresh = 0;
+        String cocktail = "";
+            //Check for other input!!!
+        
+        if (ingredients.size() > 0 || freshnessLevel.size() > 0) {
+            for (int i = 0; i < ingredients.size(); i++) {
+                if (ingredients.get(i) == 0) {
+                    ingredients.remove(ingredients.get(i));
+                    continue;
+                }
+                for (int k = freshnessLevel.size() - 1; k >= 0; k--) {
+                    if (freshnessLevel.get(k) == 0) {
+                        freshnessLevel.remove(freshnessLevel.size() - 1);
+                        continue;
+                    }
+                    totalFresh = ingredients.get(i) * freshnessLevel.get(k);
+                    if (totalFresh == 150) {
+                        cocktail = "Mimosa";
+                        cocktails.putIfAbsent(cocktail, 0);
+                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
+                        ingredients.remove(ingredients.get(i));
+                        freshnessLevel.remove(freshnessLevel.size() - 1);
+                        i--;
+                        k = freshnessLevel.size() - 1;
+                        totalFresh = 0;
+                        break;
+                    } else if (totalFresh == 250) {
+                        cocktail = "Daiquiri";
+                        cocktails.putIfAbsent(cocktail, 0);
+                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
+                        ingredients.remove(ingredients.get(i));
+                        freshnessLevel.remove(freshnessLevel.size() - 1);
+                        i--;
+                        k = freshnessLevel.size() - 1;
+                        totalFresh = 0;
+                        break;
+                    } else if (totalFresh == 300) {
+                        cocktail = "Sunshine";
+                        cocktails.putIfAbsent(cocktail, 0);
+                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
+                        ingredients.remove(ingredients.get(i));
+                        freshnessLevel.remove(freshnessLevel.size() - 1);
+                        i--;
+                        k = freshnessLevel.size() - 1;
+                        totalFresh = 0;
+                        break;
+                    } else if (totalFresh == 400) {
+                        cocktail = "Mojito";
+                        cocktails.putIfAbsent(cocktail, 0);
+                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
+                        ingredients.remove(ingredients.get(i));
+                        freshnessLevel.remove(freshnessLevel.size() - 1);
+                        i--;
+                        k = freshnessLevel.size() - 1;
+                        totalFresh = 0;
+                        break;
+                    } else {
+                        freshnessLevel.remove(freshnessLevel.size() - 1);
+                        int additionalIngrediantsValue = ingredients.get(i) + 5;
+                        ingredients.remove(ingredients.get(i));
+                        ingredients.add(additionalIngrediantsValue);
+                        i--;
+                        k = freshnessLevel.size() - 1;
+                        totalFresh = 0;
+                        break;
+                    }
+                }
+            }
+        }
+        if (cocktails.containsKey("Mimosa") && cocktails.containsKey("Daiquiri") && cocktails.containsKey("Sunshine") || cocktails.containsKey("Mojito")) {
+            System.out.println("It's party time! The cocktails are ready!");
+            for (Map.Entry<String, Integer> entry : cocktails.entrySet()) {
+                System.out.println(" # " + entry.getKey() + " --> " + entry.getValue());
+            }
+        } else {
+            System.out.println("What a pity! You didn't manage to prepare all cocktails.");
+            int sum = 0;
+            for (Integer integer : ingredients) {
+                sum += integer;
+            }
+            System.out.println("Ingredients left: " + sum);
+            for (Map.Entry<String, Integer> entry : cocktails.entrySet()) {
+                System.out.println(" # " + entry.getKey() + " --> " + entry.getValue());
+            }
+        }
+    }
+}
