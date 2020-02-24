@@ -1,0 +1,108 @@
+package com.company;
+
+import java.util.function.Consumer;
+
+public class SmartArray {
+    private static final int INITIAL_CAPACITY = 4;
+
+    private int[] data; //An array which will hold all of our elements
+    private int size; //Holds the size with real data of the array
+    private int capacity; //Holds the size of the array
+
+    public SmartArray() {
+        this.data = new int[INITIAL_CAPACITY];
+        this.capacity = INITIAL_CAPACITY;
+    }
+
+    //This method will be used to increase the internal collection's length twice
+    private void resize() {
+        this.capacity *= 2;
+        int[] copy = new int[this.capacity];
+        for (int i = 0; i < this.data.length; i++) {
+            copy[i] = this.data[i];
+        }
+        this.data = copy;
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index > this.size) {
+            String message = String.format("Index %d out of bounds for length %d", index, this.size);
+            throw new IndexOutOfBoundsException(message);
+        }
+    }
+
+    //This method will help us to rearrange the internal collection's elements after removing one.
+    private void shift(int index) {
+
+        for (int i = 0; i < this.size - 1; i++) {
+            this.data[i] = this.data[i + 1];
+        }
+        this.data[size - 1] = 0;
+    }
+
+    //This method will help us to decrease the internal collection's length twice
+    private void shrink() {
+        this.capacity /= 2;
+        int[] copy = new int[this.capacity];
+        for (int i = 0; i < this.size; i++) {
+            copy[i] = this.data[i];
+        }
+        this.data = copy;
+    }
+
+    //This method we will use when we inset element at specific index
+    private void shiftRight(int index) {
+        for (int i = this.size - 1; i > index; i--) {
+            this.data[i] = this.data[i - 1];
+        }
+    }
+
+    public void add(int element) {
+        if (size == this.capacity) {
+            resize();
+        }
+        this.data[this.size++] = element;
+    }
+
+    public int get(int index) {
+        checkIndex(index);
+        return this.data[index];
+    }
+
+    public int remove(int index) {
+        checkIndex(index);
+        int element = this.data[index];
+        shift(index);
+        return element;
+    }
+
+    public void add(int index, int element) {
+        checkIndex(index);
+        if (index == this.size - 1) {
+            add(this.data[this.size - 1]);
+            this.data[this.size - 2] = element;
+        } else {
+            this.size++;
+            shiftRight(index);
+            this.data[index] = element;
+        }
+    }
+
+    public boolean contains(int element) {
+        boolean isContains = true;
+        for (int i = 0; i < this.size; i++) {
+            if (element == this.data[i]) {
+                isContains = true;
+            } else {
+                isContains = false;
+            }
+        }
+        return isContains;
+    }
+
+    public void forEach(Consumer<Integer> consumer) {
+        for (int i = 0; i < this.size; i++) {
+            consumer.accept(this.data[i]);
+        }
+    }
+}
