@@ -1,0 +1,65 @@
+package custum.stack;
+
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
+
+public class CustomStack {
+    private static final int INITIAL_CAPACITY = 4;
+
+    private int capacity; //Holds the size of the array
+    private int size; // Holds the size with real data of the array
+    private int[] items; //An array, which will hold all of our elements
+
+    public CustomStack() {
+        this.capacity = INITIAL_CAPACITY;
+        this.items = new int[this.capacity];
+    }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    //This method resize if the size is equal to the capacity
+    private void resize() {
+        this.capacity *= 2;
+        int[] copy = new int[this.capacity];
+        for (int i = 0; i < this.items.length; i++) {
+            copy[i] = this.items[i];
+        }
+        this.items = copy;
+    }
+    //This method checks for empty collection
+    private void isEmpty() {
+        if (this.size == 0) {
+            String ifEmpty = "Customer is empty";
+            throw new NoSuchElementException(ifEmpty);
+        }
+    }
+
+    public void push(int element) {
+        if (this.size == this.capacity) {
+            this.resize();
+        }
+        this.items[this.size++] = element;
+    }
+
+    public int pop() {
+        isEmpty();
+        int element = this.items[this.size - 1];
+        this.size--;
+        return element;
+    }
+
+    public int peek(){
+        isEmpty();
+        int element = this.items[this.size-1];
+        return element;
+    }
+
+    public void forEach(Consumer<Integer> consumer){
+        for (int i = 0; i < this.size; i++) {
+            consumer.accept(this.items[i]);
+        }
+    }
+
+}
