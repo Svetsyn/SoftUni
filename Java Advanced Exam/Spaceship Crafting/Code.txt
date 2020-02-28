@@ -1,4 +1,4 @@
-package spaceshipCrafting;
+package com.company;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -7,8 +7,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        List<Integer> liquids = Arrays.stream(scanner.nextLine().split("\\s+")).map(Integer::parseInt).collect(Collectors.toList());
-        List<Integer> items = Arrays.stream(scanner.nextLine().split("\\s+")).map(Integer::parseInt).collect(Collectors.toList());
+        List<Integer> result1 = readList(scanner);
+        ArrayDeque<Integer> liquids = ParseQueue(result1);
+        List<Integer> result2 = readList(scanner);
+        ArrayDeque<Integer> items = ParseStack((result2));
 
         Map<String, Integer> collectElement = new TreeMap<>();
         collectElement.put("Glass", 0);
@@ -16,49 +18,18 @@ public class Main {
         collectElement.put("Lithium", 0);
         collectElement.put("Carbon fiber", 0);
 
-        int sum = 0;
-        String element = "";
-        while (liquids.size() > 0 || items.size() > 0) {
-            for (int i = 0; i < liquids.size(); i++) {
-                for (int k = items.size() - 1; k >= 0; k--) {
-                    sum = liquids.get(i) + items.get(k);
-                    if (sum == 25) {
-                        element = "Glass";
-                        collectElement.put(element, collectElement.get(element) + 1);
-                        liquids.remove(liquids.get(i));
-                        items.remove(items.get(k));
-                        i--;
-                        break;
-                    } else if (sum == 50) {
-                        element = "Aluminium";
-                        collectElement.put(element, collectElement.get(element) + 1);
-                        liquids.remove(liquids.get(i));
-                        items.remove(items.get(k));
-                        i--;
-                        break;
-                    } else if (sum == 75) {
-                        element = "Lithium";
-                        collectElement.put(element, collectElement.get(element) + 1);
-                        liquids.remove(liquids.get(i));
-                        items.remove(items.get(k));
-                        i--;
-                        break;
-                    } else if (sum == 100) {
-                        element = "Carbon fiber";
-                        collectElement.put(element, collectElement.get(element) + 1);
-                        liquids.remove(liquids.get(i));
-                        items.remove(items.get(k));
-                        i--;
-                        break;
-                    } else {
-                        liquids.remove(liquids.get(i));
-                        items.set(k, items.get(k) + 3);
-                        i--;
-                        break;
-                    }
-                }
+        while (!(liquids.isEmpty() || items.isEmpty())) {
+            int currentLiq = liquids.poll();
+            int currentItem = items.pop();
+
+            int result = currentItem + currentLiq;
+            String element = GetMaterialsSum(result);
+
+            if (element == "") {
+                items.push(currentItem + 3);
+            } else {
+                collectElement.put(element, collectElement.get(element) + 1);
             }
-            break;
         }
         boolean checker = false;
 
@@ -76,29 +47,72 @@ public class Main {
         if (liquids.isEmpty()) {
             System.out.println("none");
         } else {
-            for (int i = liquids.size() - 1; i >= 0; i--) {
-                if (i == 0) {
-                    System.out.println(liquids.get(i));
-                } else {
-                    System.out.print(liquids.get(i) + ", ");
-                }
-            }
+            String result = GetResult(liquids);
+            System.out.println(result);
         }
+
         System.out.print("Physical items left: ");
         if (items.isEmpty()) {
             System.out.println("none");
         } else {
-            for (int i = items.size() - 1; i >= 0; i--) {
-                if (i == 0) {
-                    System.out.println(items.get(i));
-                } else {
-                    System.out.print(items.get(i) + ", ");
-                }
-            }
+            String result = GetResult(items);
+            System.out.println(result);
         }
+
         for (Map.Entry<String, Integer> mentry : collectElement.entrySet()) {
             System.out.println(mentry.getKey() + ": " + mentry.getValue());
         }
     }
-}
 
+    private static String GetResult(ArrayDeque<Integer> item) {
+        StringBuilder sb = new StringBuilder();
+        while (!item.isEmpty()) {
+            sb.append(item.poll());
+            if (item.isEmpty()) {
+                break;
+            }
+            sb.append(", ");
+        }
+        return sb.toString().trim();
+    }
+
+    private static String GetMaterialsSum(int result) {
+        String element = "";
+        switch (result) {
+            case 25:
+                element = "Glass";
+                break;
+            case 50:
+                element = "Aluminium";
+                break;
+            case 75:
+                element = "Lithium";
+                break;
+            case 100:
+                element = "Carbon fiber";
+                break;
+        }
+        return element;
+    }
+
+    private static ArrayDeque<Integer> ParseStack(List<Integer> result2) {
+        ArrayDeque<Integer> item = new ArrayDeque<>();
+        for (Integer integer : result2) {
+            item.push(integer);
+        }
+        return item;
+    }
+
+    private static List<Integer> readList(Scanner scanner) {
+        List<Integer> listInt = Arrays.stream(scanner.nextLine().split("\\s+")).map(Integer::parseInt).collect(Collectors.toList());
+        return listInt;
+    }
+
+    private static ArrayDeque<Integer> ParseQueue(List<Integer> result1) {
+        ArrayDeque<Integer> liquid = new ArrayDeque<>();
+        for (Integer listLiquid : result1) {
+            liquid.offer(listLiquid);
+        }
+        return liquid;
+    }
+}
