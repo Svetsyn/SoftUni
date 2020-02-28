@@ -9,6 +9,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+//Try with STACK and QUEUE
         List<Integer> materials = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(n -> n != 0).collect(Collectors.toList());
         List<Integer> magicLevel = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(n -> n != 0).collect(Collectors.toList());
         Map<String, Integer> presentBox = new TreeMap<>();
