@@ -1,73 +1,118 @@
-package com.company;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
-        List<Integer> males = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(e -> e > 0).filter(e -> e % 25 != 0).collect(Collectors.toList());
-        List<Integer> females = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt).filter(e -> e > 0).filter(e -> e % 25 != 0).collect(Collectors.toList());
 
-        int matches = 0;
-//For correction: should to add methods and check for mistakes
-        while (males.size() > 0 || females.size() > 0) {
-            for (int f = 0; f < females.size(); f++) {
-                for (int m = males.size() - 1; m >= 0; m--) {
-                    if (females.get(f) == males.get(m)) {
-                        females.remove(females.get(f));
-                        males.remove(males.get(m));
-                        matches++;
-                        f--;
-                        m++;
-                        break;
+        int[] m = Arrays.stream(scanner.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        ArrayDeque<Integer> male = parseToQueue(m);
+
+        int[] f = Arrays.stream(scanner.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        ArrayDeque<Integer> female = parseToStack(f);
+
+        int dataCounter = 0;
+        while (!(male.isEmpty() || female.isEmpty())) {
+            int currentFemale = female.peek();
+            int currentMale = male.peek();
+
+            if (checkValidValue(male, female, currentFemale, currentMale)) continue;
+
+            if (currentFemale == currentMale) {
+                female.pop();
+                male.remove();
+                dataCounter++;
+            } else {
+                int[] curr = new int[male.size()];
+                for (int i = 0; i < curr.length; i++) {
+                    if (i == 0) {
+                        int currentMaleDecrease = male.peek();
+                        curr[i] = (currentMaleDecrease - 2);
+                        male.remove();
                     } else {
-                        females.remove(females.get(f));
-                        males.set(m, males.get(m) - 2);
-                        for (Integer mm : males) {
-                            if (mm <= 0) {
-                                males.remove(mm);
-                                break;
-                            }
-                        }
-                        f--;
-                        m++;
-                        break;
+                        curr[i] = male.remove();
                     }
                 }
+                female.pop();
+                for (int i = 0; i < curr.length; i++) {
+                    male.offer(curr[i]);
+                }
             }
-            break;
         }
-        System.out.println("Matches: " + matches);
+
+        System.out.println("Matches: " + dataCounter);
+        
         System.out.print("Males left: ");
-        if (males.size() != 0) {
-            for (int i = 0; i < males.size(); i++) {
-                if (i == males.size() - 1) {
-                    System.out.println(males.get(i));
+        if (male.isEmpty()) {
+            System.out.println("none");
+        } else {
+            List<Integer> finalMales = new ArrayList<>();
+            while (!male.isEmpty()) {
+                finalMales.add(male.remove());
+            }
+            for (int i = 0; i < finalMales.size(); i++) {
+                if (i == finalMales.size() - 1) {
+                    System.out.println(finalMales.get(i));
                 } else {
-                    System.out.print(males.get(i) + ", ");
+                    System.out.print(finalMales.get(i) + ", ");
                 }
             }
-        } else {
-            System.out.println("none");
         }
+
         System.out.print("Females left: ");
-        if (females.size() != 0) {
-            for (int i = 0; i < females.size(); i++) {
-                if (i == females.size() - 1) {
-                    System.out.println(females.get(i));
+        if (female.isEmpty()) {
+            System.out.println("none");
+        } else {
+            List<Integer> finalFemales = new ArrayList<>();
+            while (!female.isEmpty()) {
+                finalFemales.add(female.pop());
+            }
+            for (int i = 0; i < finalFemales.size(); i++) {
+                if (i == finalFemales.size() - 1) {
+                    System.out.println(finalFemales.get(i));
                 } else {
-                    System.out.print(females.get(i) + ", ");
+                    System.out.print(finalFemales.get(i) + ", ");
                 }
             }
-        } else {
-            System.out.println("none");
         }
+
+
+    }
+
+    private static boolean checkValidValue(ArrayDeque<Integer> male, ArrayDeque<Integer> female, int currentFemale, int currentMale) {
+        if (currentFemale <= 0) {
+            female.pop();
+            return true;
+        }
+        if (currentMale <= 0) {
+            male.remove();
+            return true;
+        }
+        if (currentFemale % 25 == 0) {
+            female.pop();
+            female.pop();
+            return true;
+        }
+        if (currentMale % 25 == 0) {
+            male.remove();
+            male.remove();
+            return true;
+        }
+        return false;
+    }
+
+    private static ArrayDeque<Integer> parseToQueue(int[] m) {
+        ArrayDeque<Integer> male = new ArrayDeque<>();
+        for (int i = m.length - 1; i >= 0; i--) {
+            male.offer(m[i]);
+        }
+        return male;
+    }
+
+    private static ArrayDeque<Integer> parseToStack(int[] f) {
+        ArrayDeque<Integer> female = new ArrayDeque<>();
+        for (int i = f.length - 1; i >= 0; i--) {
+            female.push(f[i]);
+        }
+        return female;
     }
 }
