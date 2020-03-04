@@ -1,0 +1,75 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int[] leftSocks = Arrays.stream(scanner.nextLine().split("\\s+")).mapToInt(Integer::parseInt).toArray();
+        int[] rightSocks = Arrays.stream(scanner.nextLine().split("\\s+")).mapToInt(Integer::parseInt).toArray();
+
+        ArrayDeque<Integer> left = ParseToQueue(leftSocks);
+        ArrayDeque<Integer> right = ParseToStack(rightSocks);
+
+        List<Integer> pair = new ArrayList<>();
+
+        while (!(left.isEmpty() || right.isEmpty())) {
+            int currentLeft = left.peek();
+            int currentRight = right.peek();
+            int sumPair = 0;
+            if (currentLeft > currentRight) {
+                sumPair = currentLeft + currentRight;
+                pair.add(sumPair);
+                left.remove();
+                right.pop();
+            } else if (currentLeft < currentRight) {
+                left.remove();
+            } else {
+                right.pop();
+                left.remove();
+                currentLeft += 1;
+                ArrayDeque<Integer> newLeft = new ArrayDeque<>();
+                newLeft.offer(currentLeft);
+                while (!left.isEmpty()) {
+                    newLeft.offer(left.remove());
+                }
+                left = newLeft;
+            }
+        }
+        getPrintMaxValue(pair);
+        getPrintCollection(pair);
+       
+    }
+
+    private static void getPrintCollection(List<Integer> pair) {
+        pair.stream().forEach(n -> {
+            System.out.print(n + " ");
+        });
+    }
+
+    private static void getPrintMaxValue(List<Integer> pair) {
+        int max = Integer.MIN_VALUE;
+        for (Integer integer : pair) {
+            if (integer > max) {
+                max = integer;
+            }
+        }
+        System.out.println(max);
+       
+    }
+
+    private static ArrayDeque<Integer> ParseToQueue(int[] leftSocks) {
+        ArrayDeque<Integer> left = new ArrayDeque<>();
+        for (int i = leftSocks.length - 1; i >= 0; i--) {
+            left.offer(leftSocks[i]);
+        }
+        return left;
+    }
+
+    private static ArrayDeque<Integer> ParseToStack(int[] rightSocks) {// 2 4 6
+        ArrayDeque<Integer> right = new ArrayDeque<>();
+        for (int i = rightSocks.length - 1; i >= 0; i--) {
+            right.push(rightSocks[i]);
+        }
+        return right;
+    }
+}
