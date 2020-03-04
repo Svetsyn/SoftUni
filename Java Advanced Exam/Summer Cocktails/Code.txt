@@ -1,105 +1,103 @@
-package com.company;
-
 import java.util.*;
-import java.util.spi.AbstractResourceBundleProvider;
-import java.util.stream.Collectors;
 
 public class Main {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        int[] ing = Arrays.stream(scanner.nextLine().split("\\s+")).mapToInt(Integer::parseInt).toArray();
+        ArrayDeque<Integer> ingredient = ParseToStack(ing);
+        int[] level = Arrays.stream(scanner.nextLine().split("\\s+")).mapToInt(Integer::parseInt).toArray();
+        ArrayDeque<Integer> freshLevel = ParseToQueue(level);
 
-        List<Integer> ingredients = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt)
-                .collect(Collectors.toList());
-
-        List<Integer> freshnessLevel = Arrays.stream(scanner.nextLine().split(" ")).map(Integer::parseInt)
-                .collect(Collectors.toList());
         Map<String, Integer> cocktails = new TreeMap<>();
 
-        double totalFresh = 0;
-        String cocktail = "";
-            //Check for other input!!!
-        
-        if (ingredients.size() > 0 || freshnessLevel.size() > 0) {
-            for (int i = 0; i < ingredients.size(); i++) {
-                if (ingredients.get(i) == 0) {
-                    ingredients.remove(ingredients.get(i));
-                    continue;
-                }
-                for (int k = freshnessLevel.size() - 1; k >= 0; k--) {
-                    if (freshnessLevel.get(k) == 0) {
-                        freshnessLevel.remove(freshnessLevel.size() - 1);
-                        continue;
-                    }
-                    totalFresh = ingredients.get(i) * freshnessLevel.get(k);
-                    if (totalFresh == 150) {
-                        cocktail = "Mimosa";
-                        cocktails.putIfAbsent(cocktail, 0);
-                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
-                        ingredients.remove(ingredients.get(i));
-                        freshnessLevel.remove(freshnessLevel.size() - 1);
-                        i--;
-                        k = freshnessLevel.size() - 1;
-                        totalFresh = 0;
-                        break;
-                    } else if (totalFresh == 250) {
-                        cocktail = "Daiquiri";
-                        cocktails.putIfAbsent(cocktail, 0);
-                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
-                        ingredients.remove(ingredients.get(i));
-                        freshnessLevel.remove(freshnessLevel.size() - 1);
-                        i--;
-                        k = freshnessLevel.size() - 1;
-                        totalFresh = 0;
-                        break;
-                    } else if (totalFresh == 300) {
-                        cocktail = "Sunshine";
-                        cocktails.putIfAbsent(cocktail, 0);
-                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
-                        ingredients.remove(ingredients.get(i));
-                        freshnessLevel.remove(freshnessLevel.size() - 1);
-                        i--;
-                        k = freshnessLevel.size() - 1;
-                        totalFresh = 0;
-                        break;
-                    } else if (totalFresh == 400) {
-                        cocktail = "Mojito";
-                        cocktails.putIfAbsent(cocktail, 0);
-                        cocktails.put(cocktail, cocktails.get(cocktail) + 1);
-                        ingredients.remove(ingredients.get(i));
-                        freshnessLevel.remove(freshnessLevel.size() - 1);
-                        i--;
-                        k = freshnessLevel.size() - 1;
-                        totalFresh = 0;
-                        break;
+        while (!(ingredient.isEmpty() || freshLevel.isEmpty())) {
+            int currentIngr = ingredient.peek();
+            int currentFrLevel = freshLevel.peek();
+            if (currentIngr == 0) {
+                ingredient.pop();
+                continue;
+            }
+            if (currentFrLevel == 0) {
+                freshLevel.remove();
+                continue;
+            }
+            int resultByMultiple = currentIngr * currentFrLevel;
+
+            String result = CheckForEqual(resultByMultiple);
+            if (result == null) {
+                freshLevel.remove();
+                currentIngr += 5;
+                ingredient.pop();
+                int[] con = new int[ingredient.size() + 1];
+                for (int i = 0; i < con.length; i++) {
+                    if (i == con.length - 1) {
+                        con[i] = currentIngr;
                     } else {
-                        freshnessLevel.remove(freshnessLevel.size() - 1);
-                        int additionalIngrediantsValue = ingredients.get(i) + 5;
-                        ingredients.remove(ingredients.get(i));
-                        ingredients.add(additionalIngrediantsValue);
-                        i--;
-                        k = freshnessLevel.size() - 1;
-                        totalFresh = 0;
-                        break;
+                        con[i] = ingredient.pop();
                     }
                 }
+                for (int i = con.length - 1; i >= 0; i--) {
+                    ingredient.push(con[i]);
+                }
+            } else {
+                cocktails.putIfAbsent(result, 0);
+                cocktails.put(result, cocktails.get(result) + 1);
+                ingredient.pop();
+                freshLevel.remove();
             }
         }
-        if (cocktails.containsKey("Mimosa") && cocktails.containsKey("Daiquiri") && cocktails.containsKey("Sunshine") || cocktails.containsKey("Mojito")) {
+        if (cocktails.containsKey("Mimosa") && cocktails.containsKey("Daiquiri") && cocktails.containsKey("Sunshine") && cocktails.containsKey("Mojito")) {
             System.out.println("It's party time! The cocktails are ready!");
-            for (Map.Entry<String, Integer> entry : cocktails.entrySet()) {
-                System.out.println(" # " + entry.getKey() + " --> " + entry.getValue());
-            }
         } else {
             System.out.println("What a pity! You didn't manage to prepare all cocktails.");
-            int sum = 0;
-            for (Integer integer : ingredients) {
-                sum += integer;
+        }
+        int sumIngr = 0;
+        if (!ingredient.isEmpty()) {
+            for (Integer integer : ingredient) {
+                sumIngr += integer;
             }
-            System.out.println("Ingredients left: " + sum);
-            for (Map.Entry<String, Integer> entry : cocktails.entrySet()) {
-                System.out.println(" # " + entry.getKey() + " --> " + entry.getValue());
+            if (sumIngr!=0) {
+                System.out.println("Ingredients left: " + sumIngr);
             }
         }
+        for (Map.Entry<String, Integer> entry : cocktails.entrySet()) {
+            System.out.println(" # " + entry.getKey() + " --> " + entry.getValue());
+        }
+
+    }
+
+    private static String CheckForEqual(int resultByMultiple) {
+        String result = null;
+        switch (resultByMultiple) {
+            case 150:
+                result = "Mimosa";
+                break;
+            case 250:
+                result = "Daiquiri";
+                break;
+            case 300:
+                result = "Sunshine";
+                break;
+            case 400:
+                result = "Mojito";
+                break;
+        }
+        return result;
+    }
+
+    private static ArrayDeque<Integer> ParseToQueue(int[] level) {
+        ArrayDeque<Integer> freshLevel = new ArrayDeque<>();
+        for (int i = level.length - 1; i >= 0; i--) {
+            freshLevel.offer(level[i]);
+        }
+        return freshLevel;
+    }
+
+    private static ArrayDeque<Integer> ParseToStack(int[] ing) {
+        ArrayDeque<Integer> ingredient = new ArrayDeque<>();
+        for (int i = ing.length - 1; i >= 0; i--) {
+            ingredient.push(ing[i]);
+        }
+        return ingredient;
     }
 }
