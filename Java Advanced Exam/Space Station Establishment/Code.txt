@@ -1,0 +1,127 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        //Read matrix
+        int sizeMatrix = Integer.parseInt(scanner.nextLine());
+        char[][] field = ReadMatrix(scanner, sizeMatrix);
+        //Find Player
+        int playerRow = GetFirstSymolRow('S', field);
+        int playerCol = GetFirstSymbolCol('S', playerRow, field);
+
+        boolean isInVoid = false;
+        int power = 0;
+        while (power < 50) {
+            String command = scanner.nextLine();
+
+            int currentPlayerRow = playerRow;
+            int currentPlayerCol = playerCol;
+            switch (command) {
+                case "up":
+                    currentPlayerRow -= 1;
+                    break;
+                case "down":
+                    currentPlayerRow += 1;
+                    break;
+                case "left":
+                    currentPlayerCol -= 1;
+                    break;
+                case "right":
+                    currentPlayerCol += 1;
+                    break;
+            }
+
+            //is in Space
+            isInVoid = IsInSpase(currentPlayerRow, currentPlayerCol, field.length);
+
+
+            if (isInVoid) {
+                field[playerRow][playerCol] = '-';
+                break;
+            }
+            //empty:'-'
+            char currentSymbol = field[currentPlayerRow][currentPlayerCol];
+            if (currentSymbol == '-') {
+                field[playerRow][playerCol] = '-';
+                field[currentPlayerRow][currentPlayerCol] = 'S';
+                playerRow = currentPlayerRow;
+                playerCol = currentPlayerCol;
+
+            } else if (Character.isDigit(currentSymbol)) { //is digits
+                field[playerRow][playerCol] = '-';
+                field[currentPlayerRow][currentPlayerCol] = 'S';
+                playerRow = currentPlayerRow;
+                playerCol = currentPlayerCol;
+                //playerRow=currentPlayerCol;
+                power += (currentSymbol - 48);
+            } else if (currentSymbol == 'O') { //black
+                field[playerRow][playerCol] = '-';
+                field[currentPlayerRow][currentPlayerCol] = '-';
+                playerRow = GetFirstSymolRow('O', field);
+                playerCol = GetFirstSymbolCol('O', playerRow, field);
+                field[playerRow][playerCol] = 'S';
+            }
+        }
+        if (isInVoid) {
+            System.out.println("Bad news, the spaceship went to the void.");
+        } else {
+            System.out.println("Good news! Stephen succeeded in collecting enough star power!");
+        }
+        System.out.println("Star power collected: " + power);
+        //Print Matrix
+        PrintMatrix(field);
+
+    }
+
+    private static boolean IsInSpase(int playerRow, int playerCol, int length) {
+        boolean isInGalaxy = playerRow < 0 || playerRow >= length || playerCol < 0 || playerCol >= length;
+        return isInGalaxy;
+    }
+
+    private static int GetFirstSymbolCol(char symbol, int row, char[][] field) {
+        int index = -1;
+        for (int col = 0; col < field.length; col++) {
+            if (field[row][col] == symbol) {
+                index = col;
+                break;
+            }
+        }
+        return index;
+    }
+
+    private static int GetFirstSymolRow(char symbol, char[][] field) {
+        int index = -1;
+        for (int row = 0; row < field.length; row++) {
+            for (int col = 0; col < field.length; col++) {
+                if (field[row][col] == symbol) {
+                    index = row;
+                    break;
+                }
+                if (index != -1) {
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static void PrintMatrix(char[][] field) {
+        for (int rol = 0; rol < field.length; rol++) {
+            for (int col = 0; col < field[rol].length; col++) {
+                System.out.print(field[rol][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    private static char[][] ReadMatrix(Scanner scanner, int sizeMatrix) {
+        char[][] matrix = new char[sizeMatrix][sizeMatrix];
+        for (int row = 0; row < matrix.length; row++) {
+            char[] colArr = scanner.nextLine().toCharArray();
+            matrix[row] = colArr;
+        }
+        return matrix;
+    }
+}
