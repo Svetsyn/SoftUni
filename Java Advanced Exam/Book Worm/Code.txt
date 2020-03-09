@@ -1,0 +1,123 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String initial = scanner.nextLine();
+        int squareMatrix = Integer.parseInt(scanner.nextLine());
+        char[][] matrix = readMatrix(scanner, squareMatrix);
+
+        int playerRow = getPlayRowPosition('P', matrix);
+        int playerCol = getPlayRowPosition('P', playerRow, matrix);
+
+        boolean outside = false;
+        String command = scanner.nextLine();
+        while (!command.equals("end")) {
+
+            int currentPlaeyerPositionRow = playerRow;
+            int currentPlaerPositionCol = playerCol;
+
+            switch (command) {
+                case "up":
+                    currentPlaeyerPositionRow -= 1;
+                    break;
+                case "down":
+                    currentPlaeyerPositionRow += 1;
+                    break;
+                case "left":
+                    currentPlaerPositionCol -= 1;
+                    break;
+                case "right":
+                    currentPlaerPositionCol += 1;
+                    break;
+
+            }
+
+            outside = isPlayerOutside(currentPlaeyerPositionRow, currentPlaerPositionCol, matrix.length);
+            if (!outside) {
+                char currentSymol = matrix[currentPlaeyerPositionRow][currentPlaerPositionCol];
+                if (currentSymol == '-') {
+                    matrix[playerRow][playerCol] = '-';
+                    matrix[currentPlaeyerPositionRow][currentPlaerPositionCol] = 'P';
+                    playerRow = currentPlaeyerPositionRow;
+                    playerCol = currentPlaerPositionCol;
+                } else {
+                    matrix[playerRow][playerCol] = '-';
+                    matrix[currentPlaeyerPositionRow][currentPlaerPositionCol] = 'P';
+                    playerRow = currentPlaeyerPositionRow;
+                    playerCol = currentPlaerPositionCol;
+                    initial += currentSymol;
+                }
+            } else {
+                if (!(initial.length() <= 0)) {
+                    String control = "";
+                    //initial="";
+                    for (int i = 0; i < initial.length() - 1; i++) {
+                        char symbol = initial.charAt(i);
+                        control += symbol;
+                    }
+                    initial = control;
+                }
+            }
+            command = scanner.nextLine();
+        }
+
+        System.out.println(initial);
+        printMatrix(matrix);
+
+    }
+
+    private static boolean isPlayerOutside(int playerRow, int playerCol, int length) {
+        boolean isOutside = playerRow < 0 || playerRow >= length || playerCol < 0 || playerCol >= length;
+        return isOutside;
+    }
+
+    private static int getPlayRowPosition(char P, int row, char[][] matrix) {
+        int index = -1;
+        for (int col = 0; col < matrix.length; col++) {
+            if (matrix[row][col] == 'P') {
+                index = col;
+                break;
+            }
+            if (index != -1) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private static int getPlayRowPosition(char P, char[][] matrix) {
+        int index = -1;
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col] == 'P') {
+                    index = row;
+                    break;
+                }
+                if (index != -1) {
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static void printMatrix(char[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    private static char[][] readMatrix(Scanner scanner, int squareMatrix) {
+        char[][] matrix = new char[squareMatrix][squareMatrix];
+        for (int row = 0; row < matrix.length; row++) {
+            char[] line = scanner.nextLine().toCharArray();
+            matrix[row] = line;
+        }
+        return matrix;
+    }
+}
