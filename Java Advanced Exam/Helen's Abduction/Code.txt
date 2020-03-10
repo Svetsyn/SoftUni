@@ -1,0 +1,153 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int energy = Integer.parseInt(scanner.nextLine());
+        int size = Integer.parseInt(scanner.nextLine());
+        char[][] matrix = readMatrix(scanner, size);
+
+        int playerRow = getPositionRow('P', matrix);
+        int playerCol = getPositionCol('P', playerRow, matrix);
+
+        int rowDied = 0;
+        int colDied = 0;
+        while (energy > 0) {
+            int currentRow = playerRow;
+            int currentCol = playerCol;
+
+            boolean outside = ifParisOutside(currentRow, currentCol, matrix.length);
+
+            String[] line = scanner.nextLine().split("\\s+");
+            String command = line[0];
+            int rowCurrentEnemyCoordination = Integer.parseInt(line[1]);
+            int colCurrentEnemyCoordination = Integer.parseInt(line[2]);
+
+            char currentEnemySymbol = matrix[rowCurrentEnemyCoordination][colCurrentEnemyCoordination];
+            matrix[rowCurrentEnemyCoordination][colCurrentEnemyCoordination] = 'S';
+            switch (command) {
+                case "up":
+                    currentRow -= 1;
+                    energy -= 1;
+                    break;
+                case "down":
+                    currentRow += 1;
+                    energy -= 1;
+                    break;
+                case "left":
+                    currentCol -= 1;
+                    energy -= 1;
+                    break;
+                case "right":
+                    currentCol += 1;
+                    energy -= 1;
+                    break;
+            }
+
+            if (energy <= 0) {
+                matrix[playerRow][playerCol] = '-';
+                matrix[currentRow][currentCol] = 'X';
+                playerRow = currentRow;
+                playerCol = currentCol;
+                rowDied = playerRow;
+                colDied = playerCol;
+                break;
+            }
+
+            outside = ifParisOutside(currentRow, currentCol, matrix.length);
+            if (!outside) {
+
+                char currentSymbol = matrix[currentRow][currentCol];
+
+                if (currentSymbol == 'S') {
+                    energy -= 2;
+                    if (energy <= 0) {
+                        matrix[playerRow][playerCol] = '-';
+                        matrix[currentRow][currentCol] = 'X';
+                        playerRow = currentRow;
+                        playerCol = currentCol;
+                        rowDied = playerRow;
+                        colDied = playerCol;
+                    } else {
+                        matrix[playerRow][playerCol] = '-';
+                        matrix[currentRow][currentCol] = 'P';
+                        playerRow = currentRow;
+                        playerCol = currentCol;
+                    }
+                } else if (currentSymbol == 'H') {
+                    matrix[playerRow][playerCol] = '-';
+                    matrix[currentRow][currentCol] = '-';
+                    playerRow = currentRow;
+                    playerCol = currentCol;
+                    break;
+                } else if (currentSymbol == '-') {
+                    matrix[playerRow][playerCol] = '-';
+                    matrix[currentRow][currentCol] = 'P';
+                    playerRow = currentRow;
+                    playerCol = currentCol;
+                }
+            }
+        }
+        if (energy <= 0) {
+            System.out.println("Paris died at " + rowDied + ";" + colDied + ".");
+        } else {
+            System.out.println("Paris has successfully abducted Helen! Energy left: " + energy);
+        }
+
+        printMatrix(matrix);
+
+    }
+
+    private static boolean ifParisOutside(int row, int col, int length) {
+        boolean ifOutside = row < 0 || row >= length || col < 0 || col >= length;
+        return ifOutside;
+    }
+
+    private static int getPositionCol(char P, int playerRow, char[][] matrix) {
+        int index = -1;
+        for (int col = 0; col < matrix[playerRow].length; col++) {
+            if (matrix[playerRow][col] == 'P') {
+                index = col;
+                break;
+            }
+            if (index != -1) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private static int getPositionRow(char P, char[][] matrix) {
+        int index = -1;
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col] == 'P') {
+                    index = row;
+                    break;
+                }
+                if (index != -1) {
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static void printMatrix(char[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    private static char[][] readMatrix(Scanner scanner, int size) {
+        char[][] matrix = new char[size][size];
+        for (int row = 0; row < matrix.length; row++) {
+            char[] line = scanner.nextLine().toCharArray();
+            matrix[row] = line;
+        }
+        return matrix;
+    }
+}
