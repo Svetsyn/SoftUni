@@ -1,0 +1,174 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+
+//For check!
+        int presents = Integer.parseInt(scanner.nextLine());
+        int sizeNeighborhhood = Integer.parseInt(scanner.nextLine());
+
+        String[][] matrix = readMatrix(scanner, sizeNeighborhhood);
+
+        int positionSantaRow = getRowPosition("S", matrix);
+        int positionSantaCol = getColPosition("S", positionSantaRow, matrix);
+        int nice=0;
+
+        String command = scanner.nextLine();
+        while (!command.equals("Christmas morning") || presents <= 0) {
+
+            int currentSantaRow = positionSantaRow;
+            int currentSantaCol = positionSantaCol;
+            switch (command) {
+                case "up":
+                    currentSantaRow -= 1;
+                    break;
+                case "down":
+                    currentSantaRow += 1;
+                    break;
+                case "left":
+                    currentSantaCol -= 1;
+                    break;
+                case "right":
+                    currentSantaCol += 1;
+                    break;
+            }
+            String currentSymbol = matrix[currentSantaRow][currentSantaCol];
+            if (currentSymbol.equals("V")) {
+                matrix[positionSantaRow][positionSantaCol] = "-";
+                matrix[currentSantaRow][currentSantaCol] = "S";
+                positionSantaRow = currentSantaRow;
+                positionSantaCol = currentSantaCol;
+                presents--;
+                nice++;
+            } else if (currentSymbol.equals("X")) {
+                matrix[positionSantaRow][positionSantaCol] = "-";
+                matrix[currentSantaRow][currentSantaCol] = "S";
+                positionSantaRow = currentSantaRow;
+                positionSantaCol = currentSantaCol;
+
+            } else if (currentSymbol.equals("C")) {
+                matrix[positionSantaRow][positionSantaCol] = "-";
+                matrix[currentSantaRow][currentSantaCol] = "S";
+//                positionSantaRow = currentSantaRow;
+//                positionSantaCol = currentSantaCol;
+
+                currentSantaRow-=1;
+                String currentSymbolUp = matrix[currentSantaRow][currentSantaCol];
+                if (currentSymbolUp.equals("V") || currentSymbolUp.equals("X")) {
+                    matrix[currentSantaRow][currentSantaCol] = "-";
+                    presents--;
+                }
+                currentSantaRow += 1;
+                if (presents <= 0) {
+                    break;
+                }
+
+                currentSantaRow += 1;
+                String currentSymbolDown = matrix[currentSantaRow][currentSantaCol];
+                if (currentSymbolDown.equals("V") || currentSymbolDown.equals("X")) {
+                    matrix[currentSantaRow][currentSantaCol] = "-";
+                    presents--;
+                }
+                currentSantaRow -= 1;
+                if (presents <= 0) {
+                    break;
+                }
+                currentSantaCol += 1;
+                String currentSymbolRight = matrix[currentSantaRow][currentSantaCol];
+                if (currentSymbolRight.equals("V") || currentSymbolRight.equals("X")) {
+                    matrix[currentSantaRow][currentSantaCol] = "-";
+                    presents--;
+                }
+                currentSantaCol -= 1;
+                if (presents <= 0) {
+                    break;
+                }
+                currentSantaCol -= 1;
+                String currentSymbolLeft = matrix[currentSantaRow][currentSantaCol];
+                if (currentSymbolLeft.equals("V") || currentSymbolLeft.equals("X")) {
+                    matrix[currentSantaRow][currentSantaCol] = "-";
+                    presents--;
+                }
+                currentSantaCol += 1;
+                if (presents <= 0) {
+                    break;
+                }
+
+                positionSantaRow = currentSantaRow;
+                positionSantaCol = currentSantaCol;
+            } else if (currentSymbol.equals("-")) {
+                matrix[positionSantaRow][positionSantaCol] = "-";
+                matrix[currentSantaRow][currentSantaCol] = "S";
+                positionSantaRow = currentSantaRow;
+                positionSantaCol = currentSantaCol;
+            }
+
+            command = scanner.nextLine();
+        }
+        if (presents <= 0) {
+            System.out.println("Santa ran out of presents!");
+        }
+        printMatrix(matrix,presents,nice);
+    }
+
+
+    private static int getColPosition(String s, int row, String[][] matrix) {
+        int index = -1;
+        for (int col = 0; col < matrix[row].length; col++) {
+            if (matrix[row][col].equals(s)) {
+                index = col;
+                break;
+            }
+            if (index != -1) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private static int getRowPosition(String s, String[][] matrix) {
+        int index = -1;
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col].equals(s)) {
+                    index = row;
+                    break;
+                }
+                if (index != -1) {
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static void printMatrix(String[][] matrix,int presents,int nice) {
+        int countChildren = 0;
+
+        for (int row = 0; row < matrix.length; row++) {
+            for (int i = 0; i < matrix[row].length; i++) {
+                if (matrix[row][i].equals("V")) {
+                    countChildren++;
+                }
+                System.out.print(matrix[row][i] + " ");
+            }
+            System.out.println();
+        }
+        if (countChildren == 0) {
+            System.out.println("Good job, Santa! " + nice + " happy nice kid/s.");
+        } else {
+            System.out.println("No presents for " + countChildren + " nice kid/s.");
+        }
+    }
+
+    private static String[][] readMatrix(Scanner scanner, int sizeNeighborhhood) {
+        String[][] matrix = new String[sizeNeighborhhood][sizeNeighborhhood];
+        for (int row = 0; row < matrix.length; row++) {
+            String[] line = scanner.nextLine().split(" ");
+            matrix[row] = line;
+        }
+        return matrix;
+    }
+}
