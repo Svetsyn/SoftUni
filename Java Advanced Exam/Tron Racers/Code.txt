@@ -1,0 +1,172 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int size = Integer.parseInt(scanner.nextLine());
+        char[][] matrix = readMatrix(scanner, size);
+
+        int positionFirstPlayerRow = getRowPositionPlayer('f', matrix);
+        int positionFirstPlayerCol = getColPositionPlayer('f', positionFirstPlayerRow, matrix);
+
+        int positionSecondPlayerRow = getRowPositionPlayer('s', matrix);
+        int positionSecondPlayerCol = getColPositionPlayer('s', positionSecondPlayerRow, matrix);
+
+        int currentFirstRow = positionFirstPlayerRow;
+        int currentFirstCol = positionFirstPlayerCol;
+
+        int currentSecondRow = positionSecondPlayerRow;
+        int currentSecondCol = positionSecondPlayerCol;
+
+        boolean outFirstField = false;
+        boolean outSecondField = false;
+
+        int firstLive = 0;
+        int seconLive = 0;
+        while (firstLive == 0 && seconLive == 0) {
+            String[] commands = scanner.nextLine().split("\\s+");
+            String firstCommand = commands[0];
+            String secondCommand = commands[1];
+
+            if (firstCommand.equals("up")) {
+                currentFirstRow -= 1;
+            } else if (firstCommand.equals("down")) {
+                currentFirstRow += 1;
+            } else if (firstCommand.equals("left")) {
+                currentFirstCol -= 1;
+            } else if (firstCommand.equals("right")) {
+                currentFirstCol += 1;
+            }
+
+            outFirstField = isOutside(currentFirstRow, currentFirstCol, matrix.length);
+            if (outFirstField) {
+                if (currentFirstRow < 0) {
+                    currentFirstRow = (currentFirstRow += matrix.length);
+                }else if (currentFirstRow==matrix.length){
+                    currentFirstRow=0;
+                }else if (currentFirstCol<0){
+                    currentFirstCol=(currentFirstCol+=matrix.length);
+                }else if (currentFirstCol==matrix.length){
+                    currentFirstCol=0;
+                }
+            }
+
+            char currentFirstSymbol = matrix[currentFirstRow][currentFirstCol];
+            if (currentFirstSymbol == '*') {
+                matrix[positionFirstPlayerRow][positionFirstPlayerCol] = 'f';
+                matrix[currentFirstRow][currentFirstCol] = 'f';
+                positionFirstPlayerRow = currentFirstRow;
+                positionFirstPlayerCol = currentFirstCol;
+            } else if (currentFirstSymbol == 's') {
+                matrix[positionFirstPlayerRow][positionFirstPlayerCol] = 'f';
+                matrix[currentFirstRow][currentFirstCol] = 'x';
+                positionFirstPlayerRow = currentFirstRow;
+                positionFirstPlayerCol = currentFirstCol;
+                firstLive++;
+                if (firstLive!=0) {
+                    break;
+                }
+            }
+
+            if (secondCommand.equals("up")) {
+                currentSecondRow -= 1;
+            } else if (secondCommand.equals("down")) {
+                currentSecondRow += 1;
+            } else if (secondCommand.equals("left")) {
+                currentSecondCol -= 1;
+            } else if (secondCommand.equals("right")) {
+                currentSecondCol += 1;
+            }
+
+            outSecondField = isOutside(currentSecondRow, currentSecondCol, matrix.length);
+                if (outSecondField) {
+                    if (currentSecondRow < 0) {
+                        currentSecondRow = (currentSecondRow += matrix.length);
+                    }else if (currentSecondRow==matrix.length){
+                        currentSecondRow=0;
+                    }else if (currentSecondCol<0){
+                        currentSecondCol=(currentSecondCol+=matrix.length);
+                    }else if (currentSecondCol==matrix.length){
+                        currentSecondCol=0;
+                    }
+                }
+
+
+            char currentSecondSymbol = matrix[currentSecondRow][currentSecondCol];
+            if (currentSecondSymbol == '*') {
+                matrix[positionSecondPlayerRow][positionSecondPlayerCol] = 's';
+                matrix[currentSecondRow][currentSecondCol] = 's';
+                positionSecondPlayerRow = currentSecondRow;
+                positionSecondPlayerCol = currentSecondCol;
+            } else if (currentSecondSymbol == 'f') {
+                matrix[positionSecondPlayerRow][positionSecondPlayerCol] = 's';
+                matrix[currentSecondRow][currentSecondCol] = 'x';
+                positionSecondPlayerRow = currentSecondRow;
+                positionSecondPlayerCol = currentSecondCol;
+                seconLive++;
+                if (seconLive!=0){
+
+                    break;
+                }
+            }
+
+
+        }
+
+        //System.out.println();
+        printMatrix(matrix);
+    }
+
+    private static boolean isOutside(int row, int col, int length) {
+        boolean isOutside = row < 0 || row >= length || col < 0 || col >= length;
+        return isOutside;
+    }
+
+    private static int getColPositionPlayer(char c, int row, char[][] matrix) {
+        int index = -1;
+        for (int col = 0; col < matrix[row].length; col++) {
+            if (matrix[row][col] == c) {
+                index = col;
+                break;
+            }
+            if (index != -1) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private static int getRowPositionPlayer(char c, char[][] matrix) {
+        int index = -1;
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col] == c) {
+                    index = row;
+                    break;
+                }
+                if (index != -1) {
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static void printMatrix(char[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    private static char[][] readMatrix(Scanner scanner, int size) {
+        char[][] matrix = new char[size][size];
+        for (int row = 0; row < matrix.length; row++) {
+            char[] line = scanner.nextLine().toCharArray();
+            matrix[row] = line;
+        }
+        return matrix;
+    }
+}
