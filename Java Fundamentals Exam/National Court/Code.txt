@@ -1,0 +1,22 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int firstEfficiency = Integer.parseInt(scanner.nextLine());
+        int secondEfficiency = Integer.parseInt(scanner.nextLine());
+        int thirdEfficiency = Integer.parseInt(scanner.nextLine());
+        int people = Integer.parseInt(scanner.nextLine());
+        int counterTime = 0;
+        if (people > 0) {
+            while (people > 0) {
+                counterTime++;
+                if (counterTime % 4 != 0) {
+                    people -= (firstEfficiency + secondEfficiency + thirdEfficiency);
+                }
+            }
+        }
+        System.out.println("Time needed: " + counterTime + "h.");
+
+    }
+}
