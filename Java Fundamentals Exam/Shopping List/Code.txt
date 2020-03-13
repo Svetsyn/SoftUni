@@ -1,0 +1,55 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<String> shoppingList = Arrays.stream(scanner.nextLine().split("!")).collect(Collectors.toList());
+
+        String line = scanner.nextLine();
+        while (!line.equals("Go Shopping!")) {
+            String[] token = line.split("\\s+");
+            String command = token[0];
+            String item = token[1];
+            switch (command) {
+                case "Urgent":
+                    if (!shoppingList.contains(item)) {
+                        shoppingList.add(0, item);
+                    }
+                    break;
+                case "Unnecessary":
+                    if (shoppingList.contains(item)) {
+                        shoppingList.remove(item);
+                    }
+                    break;
+                case "Correct":
+                    String oldItem = token[1];
+                    String newItem = token[2];
+                    if (shoppingList.contains(oldItem)) {
+                        int oldIndex = shoppingList.indexOf(oldItem);
+                        shoppingList.remove(oldItem);
+                        shoppingList.add(oldIndex, newItem);
+                    }
+                    break;
+                case "Rearrange":
+                    String currentItem = item;
+                    if (shoppingList.contains(item)) {
+                        shoppingList.remove(item);
+                        shoppingList.add(currentItem);
+                    }
+                    break;
+            }
+            line = scanner.nextLine();
+        }
+        for (int i = 0; i < shoppingList.size(); i++) {
+            if (i == shoppingList.size() - 1) {
+                System.out.println(shoppingList.get(i));
+            } else {
+                System.out.print(shoppingList.get(i) + ", ");
+            }
+        }
+    }
+}
