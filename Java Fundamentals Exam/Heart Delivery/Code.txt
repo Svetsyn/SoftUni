@@ -1,0 +1,71 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int[] field = Arrays.stream(scanner.nextLine().split("@")).mapToInt(Integer::parseInt).toArray();
+        String line = scanner.nextLine();
+
+        int position = 0;
+        int place = 0;
+        while (!line.equals("Love!")) {
+            String[] command = line.split(" ");
+            int steps = Integer.parseInt(command[1]);
+            if ((steps + position) <= field.length - 1) {
+                for (int i = 0; i < field.length; i++) {
+                    if (i == (steps + position)) {
+                        if (field[i] == 0) {
+                            System.out.println("Place " + i + " already had Valentine's day.");
+                            position = i;
+                            break;
+                        } else {
+                            field[i] -= 2;
+                            if (field[i]==0) {
+                                System.out.println("Place " + i + " has Valentine's day.");
+                            }
+                            position = i;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                position = 0;
+                for (int i = 0; i < field.length; i++) {
+                    if (i == position) {
+                        if (field[i] == 0) {
+                            System.out.println("Place " + i + " already had Valentine's day.");
+                            break;
+                        } else {
+                            field[i] -= 2;
+                            if (field[i]==0) {
+                                System.out.println("Place " + i + " has Valentine's day.");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            line = scanner.nextLine();
+        }
+
+        System.out.println("Cupid's last position was " + position + ".");
+        int succsessfulRate = 0;
+        int count = 0;
+        for (int i : field) {
+            if (i != 0) {
+                succsessfulRate++;
+                count++;
+            }
+        }
+        if (succsessfulRate != 0) {
+            System.out.println("Cupid has failed " + count + " places.");
+        } else {
+            System.out.println("Mission was successful.");
+        }
+    }
+}
