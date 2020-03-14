@@ -1,0 +1,57 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int health = 100;
+        int bitcoins = 0;
+        String[] rooms = scanner.nextLine().split("\\|");
+
+        for (int i = 0; i < rooms.length; i++) {
+            String[] token = rooms[i].split(" ");
+            String command = token[0];
+            int number = Integer.parseInt(token[1]);
+
+            switch (command) {
+                case "potion":
+                    if (!((health + number) > 100)) {
+                        health += number;
+                        System.out.printf("You healed for %d hp.%n", number);
+                    } else {
+                        System.out.printf("You healed for %d hp.%n", 100 - health);
+                        health = 100;
+                    }
+                    System.out.printf("Current health: %d hp.%n", health);
+                    break;
+                case "chest":
+                    System.out.printf("You found %d bitcoins.%n", number);
+                    bitcoins += number;
+                    break;
+                default:
+                    health -= number;
+                    if (health <= 0) {
+                        System.out.println("You died! Killed by " + command + ".");
+                        System.out.println("Best room: " + (i + 1));
+                    } else {
+                        System.out.println("You slayed " + command + ".");
+                    }
+                    break;
+            }
+            if (health <= 0) {
+                break;
+            }
+        }
+
+        if (health > 0) {
+            System.out.println("You've made it!");
+            System.out.println("Bitcoins: " + bitcoins);
+            System.out.println("Health: " + health);
+        }
+
+    }
+}
+
