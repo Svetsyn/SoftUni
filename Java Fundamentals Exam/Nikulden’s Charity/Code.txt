@@ -1,0 +1,84 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String message = scanner.nextLine();
+        StringBuilder sb = new StringBuilder();
+        sb.append(message);
+        String line = scanner.nextLine();
+
+        while (!line.equals("Finish")) {
+            String[] command = line.split(" ");
+            if (command.length == 3) {
+                String firstCommand = command[0];
+                if (firstCommand.equals("Replace")) {
+                    char currentChar = command[1].charAt(0);
+                    char newChar = command[2].charAt(0);
+                    for (int i = 0; i < sb.length(); i++) {
+                        char symbol = sb.charAt(i);
+                        if (symbol == currentChar) {
+                            sb.setCharAt(i, newChar);
+                        }
+                    }
+                    message = sb.toString();
+                    System.out.println(message);
+                } else if (firstCommand.equals("Cut")) {
+                    int startIndex = Integer.parseInt(command[1]);
+                    int endIndex = Integer.parseInt(command[2]);
+
+                    if (startIndex < 0 || startIndex > sb.length() - 1 || endIndex < 0 || endIndex > sb.length() - 1) {
+                        System.out.println("Invalid indexes!");
+                    } else {
+                        String newMessage = "";
+                        StringBuilder newsb = new StringBuilder(message);
+                        int start = message.indexOf(startIndex);
+                        int end = message.lastIndexOf(endIndex);
+                        newsb.delete(startIndex, endIndex + 1);
+                        System.out.println(newsb.toString());
+                    }
+                } else if (firstCommand.equals("Sum")) {
+                    int startIndex = Integer.parseInt(command[1]);
+                    int endIndex = Integer.parseInt(command[2]);
+                    if (startIndex < 0 || startIndex > sb.length() - 1 || endIndex < 0 || endIndex > sb.length() - 1) {
+                        System.out.println("Invalid indexes!");
+                    } else {
+                        String newSb = message.substring(startIndex, endIndex + 1);
+                        int sum = 0;
+                        for (int i = 0; i < newSb.length(); i++) {
+                            char Symbol = newSb.charAt(i);
+                            sum += Symbol;
+                        }
+                        System.out.println(sum);
+                    }
+                }
+            } else {
+                String firstCommand = command[0];
+                if (firstCommand.equals("Make")) {
+                    String secondComand = command[1];
+                    if (secondComand.equals("Upper")) {
+
+                        message = sb.toString().toUpperCase();
+                        System.out.println(message);
+
+                    } else {
+                        message = sb.toString().toLowerCase();
+                        System.out.println(message);
+                    }
+                } else {
+                    String str = command[1];
+
+                    if (message.contains(str)) {
+                        System.out.println("Message contains " + str);
+                    } else {
+                        System.out.println("Message doesn't contain " + str);
+                    }
+                }
+            }
+            line = scanner.nextLine();
+        }
+    }
+}
+
+
