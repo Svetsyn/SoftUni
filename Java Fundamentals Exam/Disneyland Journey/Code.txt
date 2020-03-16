@@ -1,0 +1,35 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int cost = Integer.parseInt(scanner.nextLine());
+        int months = Integer.parseInt(scanner.nextLine());
+
+        double inTheSafe = cost * 0.25;
+        double bonus = 0;
+        for (int i = 2; i <= months; i++) {
+            if (i % 2 == 0) {
+                if (i % 4 == 0) {
+                    bonus = inTheSafe * 0.25;
+                    inTheSafe += bonus;
+                }
+                inTheSafe += (cost * 0.25);
+            } else if (i % 2 != 0) {
+                inTheSafe -= (inTheSafe * 0.16);
+                inTheSafe+=(cost*0.25);
+            }
+        }
+        if (inTheSafe > cost) {
+            System.out.printf("Bravo! You can go to Disneyland and you will have %.2flv. for souvenirs.", inTheSafe - cost);
+        } else {
+            System.out.printf("Sorry. You need %.2flv. more.", Math.abs(inTheSafe-cost));
+        }
+
+    }
+}
+
+
+
