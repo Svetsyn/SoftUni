@@ -1,0 +1,71 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        List<String> shelf = Arrays.stream(scanner.nextLine().split("&")).collect(Collectors.toList());
+        String line = scanner.nextLine();
+        while (!line.equals("Done")) {
+            String[] token = line.split(" \\| ");
+
+            if (token.length == 2) {
+                String command = token[0];
+
+                switch (command) {
+                    case "Add Book":
+                        String book = token[1];
+                        if (!shelf.contains(book)) {
+                            shelf.add(0,book);
+                        }
+                        break;
+                    case "Take Book":
+                        String bookName = token[1];
+                        if (shelf.contains(bookName)) {
+                            shelf.remove(bookName);
+                        }
+                        break;
+                    case "Insert Book":
+                        String newBook = token[1];
+                        shelf.add(newBook);
+                        break;
+                    case "Check Book":
+                        int index = Integer.parseInt(token[1]);
+                        if (index >= 0 && index < shelf.size()) {
+                            for (int i = 0; i < shelf.size(); i++) {
+                                if (i == index) {
+                                    System.out.println(shelf.get(i));
+                                }
+                            }
+                        }
+                }
+            } else {
+                String book1 = token[1];
+                String book2 = token[2];
+                if (shelf.contains(book1) && shelf.contains(book2)) {
+                    int one = 0;
+                    int two = 0;
+                    for (int i = 0; i < shelf.size(); i++) {
+                        if (shelf.get(i).equals(book1)) {
+                            one = i;
+                        }
+                        if (shelf.get(i).equals(book2)) {
+                            two = i;
+                        }
+                    }
+                    //shelf.remove(book2);
+                    //shelf.remove(book1);
+                    shelf.set(two, book1);
+                    shelf.set(one, book2);
+                }
+            }
+
+            line = scanner.nextLine();
+        }
+        System.out.print(String.join(", ", shelf));
+    }
+}
+
+
+
