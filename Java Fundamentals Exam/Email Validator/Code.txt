@@ -1,0 +1,75 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String email = scanner.nextLine();
+
+        String line = scanner.nextLine();
+        while (!line.equals("Complete")) {
+            StringBuilder sb = new StringBuilder(email);
+            switch (line) {
+                case "Make Upper":
+                    email = sb.toString().toUpperCase();
+                    System.out.println(email);
+                    break;
+                case "Make Lower":
+                    email = sb.toString().toLowerCase();
+                    System.out.println(email);
+                    break;
+                case "GetUsername":
+                    if (email.contains("@")) {
+                        for (int i = 0; i < email.length(); i++) {
+                            char symbol = email.charAt(i);
+                            if (symbol != '@') {
+                                System.out.print(symbol);
+                            }else {
+                                break;
+                            }
+                        }
+                        System.out.println();
+                    } else {
+                        System.out.println("The email " + email + " doesn't contain the @ symbol.");
+                    }
+                    break;
+                case "Encrypt":
+                    int index = 0;
+                    for (int i = 0; i < email.length(); i++) {
+                        char symbol = email.charAt(i);
+                        System.out.print((int) symbol + " ");
+                    }
+                    break;
+                default:
+                    String[] command = line.split("\\s+");
+                    String firstCommand = command[0];
+                    if (firstCommand.equals("GetDomain")) {
+                        int count = Integer.parseInt(command[1]);
+                        for (int i = email.length() - count; i < email.length(); i++) {
+                            char symbol = email.charAt(i);
+                            System.out.print(symbol);
+                        }
+                        System.out.println();
+                        break;
+                    }else {
+                        char symbol = command[1].charAt(0);
+                        String newMessage = "";
+                        for (int i = 0; i < email.length(); i++) {
+                            char currentSymbol = email.charAt(i);
+                            if (currentSymbol==symbol){
+                                currentSymbol='-';
+                            }
+                            newMessage+=currentSymbol;
+                        }
+                        email=newMessage;
+                        System.out.println(email);
+                    }
+            }
+            line = scanner.nextLine();
+        }
+    }
+}
+
+
+
+

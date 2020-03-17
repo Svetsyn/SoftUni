@@ -1,0 +1,51 @@
+import javax.swing.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        //For check!!!
+        Scanner scanner = new Scanner(System.in);
+        Map<String, List<String>> inbox = new TreeMap<>();
+        String line = scanner.nextLine();
+        while (!line.equals("Statistics")) {
+            String[] token = line.split("->");
+            String command = token[0];
+            if (token.length == 2) {
+                String name = token[1];
+                if (command.equals("Add")) {
+                    if (inbox.containsKey(name)) {
+                        System.out.printf("%s is already registered%n", name);
+                    } else {
+                        inbox.putIfAbsent(name, new ArrayList<>());
+                    }
+                } else if (command.equals("Delete")) {
+                    if (inbox.containsKey(name)) {
+                        inbox.remove(name);
+                    } else {
+                        System.out.printf("%s not found!%n", name);
+                    }
+                }
+            } else if (token.length == 3) {
+                String name = token[1];
+                String email = token[2];
+                inbox.get(name).add(email);
+            }
+            line = scanner.nextLine();
+        }
+        System.out.println("Users count: " + inbox.size());
+
+        for (Map.Entry<String, List<String>> entry : inbox.entrySet()) {
+            String user = entry.getKey();
+            System.out.println(user);
+            List<String> infoImail = entry.getValue();
+            for (String s : infoImail) {
+                System.out.println(" - " + s);
+            }
+        }
+    }
+}
+
+
+
+
